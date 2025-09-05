@@ -1,3 +1,256 @@
+# Place all handler definitions after all imports
+
+from pyrogram import Client, filters, enums
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+import asyncio
+
+@Client.on_message(filters.command("hyperlinkdemo") & filters.private)
+async def hyperlink_demo(client, message):
+    # Demonstrate a working Telegram hyperlink using HTML
+    text = 'Visit <a href="https://www.google.com">Google</a> for search.'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=text,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+@Client.on_message(filters.command("hyperlinkdemo") & filters.private)
+async def hyperlink_demo(client, message):
+    # Demonstrate a working Telegram hyperlink using HTML
+    text = 'Visit <a href="https://www.google.com">Google</a> for search.'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=text,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+
+# ...existing code...
+
+# Place all handler definitions after all imports
+from pyrogram import Client, filters
+
+
+# Test various hyperlink methods with /testhyper
+
+# ...existing code...
+
+
+# ...existing code...
+
+# Place all handler definitions after all imports
+from pyrogram import Client, filters
+
+@Client.on_message(filters.command("testhyper") & filters.private)
+async def test_hyperlink(client, message):
+    print("/testhyper handler triggered!")  # Debug print
+    await client.send_message(
+        chat_id=message.chat.id,
+        text="/testhyper handler triggered! (debug)",
+        disable_web_page_preview=True
+    )
+    # Method 1: HTML with quotes
+    html1 = '<a href="https://t.me/dreamxbotz">HTML Link with quotes</a>'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=html1,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+    # Method 2: HTML without quotes (not recommended, but for test)
+    html2 = '<a href=https://t.me/dreamxbotz>HTML Link no quotes</a>'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=html2,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+    # Method 3: Markdown (should not work for inline links in Telegram, but for test)
+    md1 = '[Markdown Link](https://t.me/dreamxbotz)'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=md1,
+        parse_mode="Markdown",
+        disable_web_page_preview=True
+    )
+    # Method 4: HTML with bold inside
+    html3 = '<a href="https://t.me/dreamxbotz"><b>HTML Bold Link</b></a>'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=html3,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+    # Method 5: HTML with code inside
+    html4 = '<a href="https://t.me/dreamxbotz"><code>HTML Code Link</code></a>'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=html4,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+
+@Client.on_message(filters.command("hyperlinktest") & filters.private)
+async def hyperlink_test(client, message):
+    # Use the same technique as Script.py
+    link = '<a href="https://www.google.com">Google</a>'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=f"Here is a hyperlink: {link}",
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+
+@Client.on_message(filters.command("hyperlinkdemo") & filters.private)
+async def hyperlink_demo(client, message):
+    # Demonstrate a working Telegram hyperlink using HTML
+    text = 'Visit <a href="https://www.google.com">Google</a> for search.'
+    await client.send_message(
+        chat_id=message.chat.id,
+        text=text,
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+BATCH_FILES = {}
+
+# /explore command: send 20 popular movies as IMDB links for Telegram link preview
+POPULAR_MOVIES = [
+    {"title": "The Shawshank Redemption", "year": "1994", "url": "https://www.imdb.com/title/tt0111161/"},
+    {"title": "The Godfather", "year": "1972", "url": "https://www.imdb.com/title/tt0068646/"},
+    {"title": "The Dark Knight", "year": "2008", "url": "https://www.imdb.com/title/tt0468569/"},
+    {"title": "Pulp Fiction", "year": "1994", "url": "https://www.imdb.com/title/tt0110912/"},
+    {"title": "Forrest Gump", "year": "1994", "url": "https://www.imdb.com/title/tt0109830/"},
+    {"title": "Inception", "year": "2010", "url": "https://www.imdb.com/title/tt1375666/"},
+    {"title": "Fight Club", "year": "1999", "url": "https://www.imdb.com/title/tt0137523/"},
+    {"title": "The Matrix", "year": "1999", "url": "https://www.imdb.com/title/tt0133093/"},
+    {"title": "Goodfellas", "year": "1990", "url": "https://www.imdb.com/title/tt0099685/"},
+    {"title": "The Lord of the Rings: The Return of the King", "year": "2003", "url": "https://www.imdb.com/title/tt0167260/"},
+    {"title": "Interstellar", "year": "2014", "url": "https://www.imdb.com/title/tt0816692/"},
+    {"title": "Parasite", "year": "2019", "url": "https://www.imdb.com/title/tt6751668/"},
+    {"title": "Joker", "year": "2019", "url": "https://www.imdb.com/title/tt7286456/"},
+    {"title": "Avengers: Endgame", "year": "2019", "url": "https://www.imdb.com/title/tt4154796/"},
+    {"title": "Gladiator", "year": "2000", "url": "https://www.imdb.com/title/tt0172495/"},
+    {"title": "Titanic", "year": "1997", "url": "https://www.imdb.com/title/tt0120338/"},
+    {"title": "The Lion King", "year": "1994", "url": "https://www.imdb.com/title/tt0110357/"},
+    {"title": "Schindler's List", "year": "1993", "url": "https://www.imdb.com/title/tt0108052/"},
+    {"title": "The Silence of the Lambs", "year": "1991", "url": "https://www.imdb.com/title/tt0102926/"},
+    {"title": "Saving Private Ryan", "year": "1998", "url": "https://www.imdb.com/title/tt0120815/"}
+]
+
+from pyrogram import Client, filters
+
+
+
+# Move /explore command handler to the end to ensure registration
+
+@Client.on_message(filters.command("explore") & filters.private)
+async def explore_movies(client, message):
+    """Command to explore top IMDB movies with deep link buttons to search"""
+    # First, let's send a welcome message
+    await message.reply("🎬 **Top IMDB Movies** 🎬\n\nHere are some of the highest-rated movies on IMDB:")
+    
+    # Only show first 10 movies to avoid flooding
+    top_movies = [
+        {"title": "The Shawshank Redemption", "year": "1994", "url": "https://www.imdb.com/title/tt0111161/", "poster": "https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIwLTljNTEtNWYzODZhYzU3N2NhXkEyXkFqcGdeQXVyNDYyMDk5MTU@._V1_.jpg", "desc": "Two imprisoned men bond over years, finding redemption through acts of decency."},
+        {"title": "The Godfather", "year": "1972", "url": "https://www.imdb.com/title/tt0068646/", "poster": "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmYtYTAwMC00ZjQ5LWFmNTEtODM1ZmRlY2RhYjA2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", "desc": "The aging patriarch of an organized crime dynasty transfers control to his reluctant son."},
+        {"title": "The Dark Knight", "year": "2008", "url": "https://www.imdb.com/title/tt0468569/", "poster": "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", "desc": "Batman faces his greatest challenge as the Joker wreaks havoc on Gotham City."},
+        {"title": "The Godfather Part II", "year": "1974", "url": "https://www.imdb.com/title/tt0071562/", "poster": "https://m.media-amazon.com/images/M/MV5BMWMwMGQzZTItY2JlNC00OWZiLWIyMDctNDk2ZDQ2YjRjMWQ0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", "desc": "The early life of Vito Corleone while his son expands the family crime syndicate."},
+        {"title": "12 Angry Men", "year": "1957", "url": "https://www.imdb.com/title/tt0050083/", "poster": "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_.jpg", "desc": "A jury holdout attempts to prevent a miscarriage of justice by forcing his colleagues to reconsider the evidence."},
+        {"title": "Schindler's List", "year": "1993", "url": "https://www.imdb.com/title/tt0108052/", "poster": "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg", "desc": "A businessman saves over a thousand Jews from the Holocaust by employing them in his factories."},
+        {"title": "The Lord of the Rings: The Return of the King", "year": "2003", "url": "https://www.imdb.com/title/tt0167260/", "poster": "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", "desc": "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam."},
+        {"title": "Pulp Fiction", "year": "1994", "url": "https://www.imdb.com/title/tt0110912/", "poster": "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", "desc": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption."},
+        {"title": "The Lord of the Rings: The Fellowship of the Ring", "year": "2001", "url": "https://www.imdb.com/title/tt0120737/", "poster": "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg", "desc": "A meek Hobbit and eight companions set out on a journey to destroy the One Ring and the Dark Lord Sauron."},
+        {"title": "The Good, the Bad and the Ugly", "year": "1966", "url": "https://www.imdb.com/title/tt0060196/", "poster": "https://m.media-amazon.com/images/M/MV5BNjJlYmNkZGItM2NhYy00MjlmLTk5NmQtNjg1NmM2ODU4OTMwXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_.jpg", "desc": "Three gunslingers compete to find fortune in a buried cache of Confederate gold amid the violent chaos of the Civil War."}
+    ]
+    
+    # Process each movie one by one
+    for m in top_movies:
+        try:
+            # Format movie name for the deep link exactly like the example (replace spaces with hyphens)
+            formatted_name = m['title'].replace(' ', '-')
+            
+            # Create deep link URL in the format https://t.me/BotUsername?start=getfile-MovieName
+            deep_link = f"https://t.me/{temp.U_NAME}?start=getfile-{formatted_name}"
+            
+            # Create button with the deep link URL and download emoji
+            buttons = [[InlineKeyboardButton("⬇️ Get This Movie", url=deep_link)]]
+            reply_markup = InlineKeyboardMarkup(buttons)
+            
+            # Create caption with movie title as a hyperlink and description
+            caption = f"🎬 <a href='{m['url']}'><b>{m['title']}</b></a> ({m['year']})\n\n{m['desc']}"
+            
+            try:
+                # Try to send with photo
+                if 'poster' in m and m['poster']:
+                    await message.reply_photo(
+                        photo=m['poster'],
+                        caption=caption,
+                        reply_markup=reply_markup,
+                        parse_mode=enums.ParseMode.HTML
+                    )
+                else:
+                    # Fallback to text only if no poster
+                    await message.reply(
+                        text=caption,
+                        reply_markup=reply_markup,
+                        parse_mode=enums.ParseMode.HTML
+                    )
+            except Exception as img_error:
+                print(f"Image error: {img_error}")
+                # If photo fails, send as text
+                await message.reply(
+                    text=caption,
+                    reply_markup=reply_markup,
+                    parse_mode=enums.ParseMode.HTML
+                )
+                
+            # Add a small delay to avoid flooding
+            await asyncio.sleep(0.5)
+            
+        except Exception as e:
+            print(f"Error sending movie {m['title']}: {e}")
+            # Try a simplified version if regular send fails
+            try:
+                # Simplified version with movie title as hyperlink and description
+                simple_caption = f"<a href='{m['url']}'>{m['title']}</a> ({m['year']})\n\n{m['desc']}"
+                await message.reply(simple_caption, parse_mode=enums.ParseMode.HTML)
+            except:
+                pass
+
+# Removed the callback handler since we're now using direct deep links
+# with the URL parameter in the format:
+# https://t.me/bot_username?start=getfile-MovieName
+
+# Add a simple test button command
+@Client.on_message(filters.command("testbutton") & filters.private)
+async def test_button_cmd(client, message):
+    """Simple command to test if buttons are working correctly"""
+    buttons = [[InlineKeyboardButton("Test Button", callback_data="test_button_click")]]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    
+    # Use a default image URL - replace with any image URL you prefer
+    image_url = "https://i.imgur.com/gxbTvQS.jpeg"
+    
+    try:
+        await message.reply_photo(
+            photo=image_url,
+            caption="This is a test button. Click it to verify buttons are working.",
+            reply_markup=reply_markup
+        )
+    except Exception as e:
+        # Fallback to text if image fails
+        print(f"Image error: {e}")
+        await message.reply(
+            text="This is a test button. Click it to verify buttons are working.",
+            reply_markup=reply_markup
+        )
+
+@Client.on_callback_query(filters.regex(r"^test_button_click"))
+async def handle_test_button(client, callback_query):
+    """Handle the test button click"""
+    await callback_query.answer("Button is working! ✅", show_alert=True)
+    await callback_query.message.reply("Button click received successfully! The button system is working correctly.")
+
 import os
 import re, sys
 import json
@@ -116,7 +369,7 @@ async def start(client, message):
         elif curr_time < 21:
             gtxt = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
         else:
-            gtxt = "ɢᴏᴏᴅ ɴɪɢʜᴛ 🌑"
+            gtxt = "ɢᴏᴏᴅ ɴɪɡʜᴛ 🌑"
         m=await message.reply_text("⏳")
         await asyncio.sleep(0.4)
         await m.delete()        
@@ -148,7 +401,7 @@ async def start(client, message):
         elif curr_time < 21:
             gtxt = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
         else:
-            gtxt = "ɢᴏᴏᴅ ɴɪɢʜᴛ 🌑"
+            gtxt = "ɢᴏᴏᴅ ɴɪɡʜᴛ 🌑"
         m=await message.reply_text("⏳")
         await asyncio.sleep(0.4)
         await m.delete()        
@@ -245,14 +498,14 @@ async def start(client, message):
                 if len(message.command) > 1 and "_" in message.command[1]:
                     kk, file_id = message.command[1].split("_", 1)
                     btn.append([
-                        InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksub#{kk}#{file_id}")
+                        InlineKeyboardButton("♻️ ᴛʀʏ ᴀɡᴀɪɴ ♻️", callback_data=f"checksub#{kk}#{file_id}")
                     ])
                     reply_markup = InlineKeyboardMarkup(btn)
                 photo = random.choice(FSUB_PICS) if FSUB_PICS else "https://graph.org/file/7478ff3eac37f4329c3d8.jpg"
                 caption = (
                     f"👋 ʜᴇʟʟᴏ {message.from_user.mention}\n\n"
                     "🛑 ʏᴏᴜ ᴍᴜsᴛ ᴊᴏɪɴ ᴛʜᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ.\n"
-                    "👉 ᴊᴏɪɴ ᴀʟʟ ᴛʜᴇ ʙᴇʟᴏᴡ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ."
+                    "👉 ᴊᴏɪɴ ᴀʟʟ ᴛʜᴇ ʙᴇʟᴏᴡ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʀʏ ᴀɡᴀɪɴ."
                 )
                 await message.reply_photo(
                     photo=photo,
@@ -369,7 +622,7 @@ async def start(client, message):
             await asyncio.sleep(DELETE_TIME)
             for x in filesarr:
                 await x.delete()
-            await k.edit_text("<b>ʏᴏᴜʀ ᴀʟʟ ᴠɪᴅᴇᴏꜱ/ꜰɪʟᴇꜱ ᴀʀᴇ ᴅᴇʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !\nᴋɪɴᴅʟʏ ꜱᴇᴀʀᴄʜ ᴀɢᴀɪɴ</b>")
+            await k.edit_text("<b>ʏᴏᴜʀ ᴀʟʟ ᴠɪᴅᴇᴏꜱ/ꜰɪʟᴇꜱ ᴀʀᴇ ᴅᴇʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !\nᴋɪɴᴅʟʏ ꜱᴇᴀʀᴄʜ ᴀɡᴀɪɴ</b>")
             return
         except Exception as e:
             logger.exception(e)
@@ -383,22 +636,21 @@ async def start(client, message):
         try:
             if STREAM_MODE and not PREMIUM_STREAM_MODE:
                 btn = [
-                    [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
+                    [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
                     [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
                 ]
             elif STREAM_MODE and PREMIUM_STREAM_MODE:
                 if not await db.has_premium_access(message.from_user.id):
                    btn = [
-                        [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'prestream')],
+                        [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'prestream')],
                         [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
                     ]
                 else:
                     btn = [
-                        [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
+                        [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
                         [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
                     ]
             else:
-            
                 btn = [[InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]] 
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -456,18 +708,18 @@ async def start(client, message):
     
     if STREAM_MODE and not PREMIUM_STREAM_MODE:
         btn = [
-            [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
+            [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
             [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
         ]
     elif STREAM_MODE and PREMIUM_STREAM_MODE:
         if not await db.has_premium_access(message.from_user.id):
             btn = [
-                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'prestream')],
+                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'prestream')],
                 [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
             ]
         else:
             btn = [
-                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
+                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᡟ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
                 [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]  # Keep this line unchanged  
             ]
     else:
@@ -498,95 +750,7 @@ async def log_file(bot, message):
         await message.reply_document('DreamXlogs.txt', caption="📑 **ʟᴏɢꜱ**")
     except Exception as e:
         await message.reply(str(e))
-
-@Client.on_message(filters.command('delete') & filters.user(ADMINS))
-async def delete(bot, message):
-    """Delete file from database"""
-    reply = message.reply_to_message
-    if reply and reply.media:
-        msg = await message.reply("Pʀᴏᴄᴇssɪɴɢ...⏳", quote=True)
-    else:
-        await message.reply('Rᴇᴘʟʏ ᴛᴏ ғɪʟᴇ ᴡɪᴛʜ /delete ᴡʜɪᴄʜ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴇʟᴇᴛᴇ', quote=True)
         return
-
-    for file_type in ("document", "video", "audio"):
-        media = getattr(reply, file_type, None)
-        if media is not None:
-            break
-    else:
-        await msg.edit('Tʜɪs ɪs ɴᴏᴛ sᴜᴘᴘᴏʀᴛᴇᴅ ғɪʟᴇ ғᴏʀᴍᴀᴛ')
-        return
-    
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    if await Media.count_documents({'file_id': file_id}):
-        result = await Media.collection.delete_one({
-            '_id': file_id,
-        })
-    else:
-        result = await Media2.collection.delete_one({
-            '_id': file_id,
-        })
-    if result.deleted_count:
-        await msg.edit('Fɪʟᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ғʀᴏᴍ ᴅᴀᴛᴀʙᴀsᴇ ✅')
-    else:
-        file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
-        result = await Media.collection.delete_many({
-            'file_name': file_name,
-            'file_size': media.file_size,
-            'mime_type': media.mime_type
-            })
-        if result.deleted_count:
-            await msg.edit('Fɪʟᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ғʀᴏᴍ ᴅᴀᴛᴀʙᴀsᴇ ✅')
-        else:
-            result = await Media2.collection.delete_many({
-                'file_name': file_name,
-                'file_size': media.file_size,
-                'mime_type': media.mime_type
-            })
-            if result.deleted_count:
-                await msg.edit('Fɪʟᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ғʀᴏᴍ ᴅᴀᴛᴀʙᴀsᴇ')
-            else:
-                result = await Media.collection.delete_many({
-                    'file_name': media.file_name,
-                    'file_size': media.file_size,
-                    'mime_type': media.mime_type
-                })
-                if result.deleted_count:
-                    await msg.edit('Fɪʟᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ғʀᴏᴍ ᴅᴀᴛᴀʙᴀsᴇ ✅')
-                else:
-                    result = await Media2.collection.delete_many({
-                        'file_name': media.file_name,
-                        'file_size': media.file_size,
-                        'mime_type': media.mime_type
-                    })
-                    if result.deleted_count:
-                        await msg.edit('Fɪʟᴇ ɪs sᴜᴄᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ғʀᴏᴍ ᴅᴀᴛᴀʙᴀsᴇ ✅')
-                    else:
-                        await msg.edit('Fɪʟᴇ ɴᴏᴛ ғᴏᴜɴᴅ ɪɴ ᴅᴀᴛᴀʙᴀsᴇ ❌')
-
-
-@Client.on_message(filters.command('deleteall') & filters.user(ADMINS))
-async def delete_all_index(bot, message):
-    await message.reply_text(
-        'ᴛʜɪꜱ ᴡɪʟʟ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ʏᴏᴜʀ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ !\nᴅᴏ ʏᴏᴜ ꜱᴛɪʟʟ ᴡᴀɴᴛ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ ?',
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="⚠️ ʏᴇꜱ ⚠️", callback_data="autofilter_delete"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="❌ ɴᴏ ❌", callback_data="close_data"
-                    )
-                ],
-            ]
-        ),
-        quote=True,
-    )
-
-@Client.on_message(filters.command('settings'))
 async def settings(client, message):
     user_id = message.from_user.id if message.from_user else None
     if not user_id:
@@ -623,7 +787,7 @@ async def settings(client, message):
                 pass
         await message.reply_text(
                     "⚠️ ꜱᴇʟᴇᴄᴛ ᴛʜᴇ ɢʀᴏᴜᴘ ᴡʜᴏꜱᴇ ꜱᴇᴛᴛɪɴɢꜱ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴄʜᴀɴɢᴇ.\n\n"
-                    "ɪꜰ ʏᴏᴜʀ ɢʀᴏᴜᴘ ɪꜱ ɴᴏᴛ ꜱʜᴏᴡɪɴɢ ʜᴇʀᴇ,\n"
+                    "ɪꜰ ʏᴏᴜʀ ɢʀᴏᴜᴘ ɪꜱ ɴᴏᴛ ꜱʜᴏᴡɪɴɢ ʜʏʀᴇ,\n"
                     "ᴜꜱᴇ /reload ɪɴ ᴛʜᴀᴛ ɢʀᴏᴜᴘ ᴀɴᴅ ɪᴛ ᴡɪʟʟ ᴀᴘᴘᴇᴀʀ ʜᴇʀᴇ.",
                     reply_markup=InlineKeyboardMarkup(group_list)
                 )
@@ -633,7 +797,7 @@ async def connect_group(client, message):
     user_id = message.from_user.id
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         await db.connect_group(message.chat.id, user_id)
-        await message.reply_text("Gʀᴏᴜᴘ Rᴇʟᴏᴀᴅᴇᴅ ✅ Nᴏᴡ Yᴏᴜ Cᴀɴ Mᴀɴᴀɢᴇ Tʜɪs Gʀᴏᴜᴘ Fʀᴏᴍ PM.")
+        await message.reply_text("Gʀᴏᴜᴘ Rᴇʟᴏᴀᴅᴇᴅ ✅ Nᴏᴡ Yᴏᴜ Cᴀɴ Mᴀɴᴀɡᴇ Tʜɪs Gʀᴏᴜᴘ Fʀᴏᴍ PM.")
     elif message.chat.type == enums.ChatType.PRIVATE:
         if len(message.command) < 2:
             await message.reply_text("Example: /reload 123456789")
@@ -813,192 +977,14 @@ async def send_msg(bot, message):
             if success:
                 await message.reply_text(f"<b>ʏᴏᴜʀ ᴍᴇꜱꜱᴀɢᴇ ʜᴀꜱ ʙᴇᴇɴ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇɴᴛ ᴛᴏ {user.mention}.</b>")
             else:
-                await message.reply_text("<b>ᴛʜɪꜱ ᴜꜱᴇʀ ᴅɪᴅɴ'ᴛ ꜱᴛᴀʀᴛᴇᴅ ᴛʜɪꜱ ʙᴏᴛ ʏᴇᴛ !</b>")
+                await message.reply_text("<b>ᴛʜɪꜱ ᴜꜱᴇʀ ᴅɪᴅɴ'ᴛ ꜱᴀʀᴛᴇᴅ ᴛʜɪꜱ ʙᴏᴛ ʏᴇᴛ !</b>")
         except Exception as e:
             await message.reply_text(f"<b>Error: {e}</b>")
     else:
-        await message.reply_text("<b>ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴀꜱ ᴀ ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴍᴇꜱꜱᴀɢᴇ ᴜꜱɪɴɢ ᴛʜᴇ ᴛᴀʀɢᴇᴛ ᴄʜᴀᴛ ɪᴅ. ꜰᴏʀ ᴇɢ:  /send ᴜꜱᴇʀɪᴅ</b>")
+        await message.reply_text("<b>ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴀꜱ ᴀ ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴍᴇꜱꜱᴀɢᴇ ᴜꜱɪɴɢ ᴛʜᴇ ᴛᴀʀɡᴇᴛ ᴄʜᴀᴛ ɪᴅ. ꜰᴏʀ ᴇɡ:  /send ᴜꜱᴇʀɪᴅ</b>")
 
 @Client.on_message(filters.command("deletefiles") & filters.user(ADMINS))
 async def deletemultiplefiles(bot, message):
-    chat_type = message.chat.type
-    if chat_type != enums.ChatType.PRIVATE:
-        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command won't work in groups. It only works on my PM !</b>")
-    else:
-        pass
-    try:
-        keyword = message.text.split(" ", 1)[1]
-    except:
-        return await message.reply_text(f"<b>Hey {message.from_user.mention}, Give me a keyword along with the command to delete files.</b>")
-    k = await bot.send_message(chat_id=message.chat.id, text=f"<b>Fetching Files for your query {keyword} on DB... Please wait...</b>")
-    files, total = await get_bad_files(keyword)
-    await k.delete()
-    btn = [[
-       InlineKeyboardButton("⚠️ Yes, Continue ! ⚠️", callback_data=f"killfilesdq#{keyword}")
-       ],[
-       InlineKeyboardButton("❌ No, Abort operation ! ❌", callback_data="close_data")
-    ]]
-    await message.reply_text(
-        text=f"<b>Found {total} files for your query {keyword} !\n\nDo you want to delete?</b>",
-        reply_markup=InlineKeyboardMarkup(btn),
-        parse_mode=enums.ParseMode.HTML
-    )
-
-
-@Client.on_callback_query(filters.regex("topsearch"))
-async def topsearch_callback(client, callback_query):
-    def is_alphanumeric(string):
-        return bool(re.match('^[a-zA-Z0-9 ]*$', string))
-    
-    limit = 20  
-    top_messages = await mdb.get_top_messages(limit)
-    seen_messages = set()
-    truncated_messages = []
-    for msg in top_messages:
-        msg_lower = msg.lower()
-        if msg_lower not in seen_messages and is_alphanumeric(msg):
-            seen_messages.add(msg_lower)
-            if len(msg) > 35:
-                truncated_messages.append(msg[:32] + "...")
-            else:
-                truncated_messages.append(msg)
-    keyboard = [truncated_messages[i:i+2] for i in range(0, len(truncated_messages), 2)]
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard, 
-        one_time_keyboard=True, 
-        resize_keyboard=True, 
-        placeholder="Most searches of the day"
-    )
-    await callback_query.message.reply_text(
-        "<b>Tᴏᴘ Sᴇᴀʀᴄʜᴇs Oғ Tʜᴇ Dᴀʏ 👇</b>",
-        reply_markup=reply_markup
-    )
-    await callback_query.answer()
-
-@Client.on_message(filters.command('top_search'))
-async def top(_, message):
-    def is_alphanumeric(string):
-        return bool(re.match('^[a-zA-Z0-9 ]*$', string))
-    try:
-        limit = int(message.command[1])
-    except (IndexError, ValueError):
-        limit = 20
-    top_messages = await mdb.get_top_messages(limit)
-    seen_messages = set()
-    truncated_messages = []
-    for msg in top_messages:
-        msg_lower = msg.lower()
-        if msg_lower not in seen_messages and is_alphanumeric(msg):
-            seen_messages.add(msg_lower)
-            if len(msg) > 35:
-                truncated_messages.append(msg[:32] + "...")
-            else:
-                truncated_messages.append(msg)
-    keyboard = [truncated_messages[i:i+2] for i in range(0, len(truncated_messages), 2)]
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard, 
-        one_time_keyboard=True, 
-        resize_keyboard=True, 
-        placeholder="Most searches of the day"
-    )
-    await message.reply_text(
-        "<b>Tᴏᴘ Sᴇᴀʀᴄʜᴇs Oғ Tʜᴇ Dᴀʏ 👇</b>",
-        reply_markup=reply_markup
-    )
-
-@Client.on_message(filters.command('trendlist'))
-async def trendlist(client, message):
-    def is_alphanumeric(string):
-        return bool(re.match('^[a-zA-Z0-9 ]*$', string))
-    limit = 31
-    if len(message.command) > 1:
-        try:
-            limit = int(message.command[1])
-        except ValueError:
-            await message.reply_text(
-                "Invalid number format.\nPlease provide a valid number after the /trendlist command."
-            )
-            return 
-    try:
-        top_messages = await mdb.get_top_messages(limit)
-    except Exception as e:
-        await message.reply_text(f"Error retrieving messages: {str(e)}")
-        return  
-
-    if not top_messages:
-        await message.reply_text("No top messages found.")
-        return 
-    seen_messages = set()
-    truncated_messages = []
-
-    for msg in top_messages:
-        msg_lower = msg.lower()
-        if msg_lower not in seen_messages and is_alphanumeric(msg):
-            seen_messages.add(msg_lower)
-            truncated_messages.append(msg[:32] + '...' if len(msg) > 35 else msg)
-
-    if not truncated_messages:
-        await message.reply_text("No valid top messages found.")
-        return  
-    formatted_list = "\n".join([f"{i+1}. <b>{msg}</b>" for i, msg in enumerate(truncated_messages)])
-    additional_message = (
-        "⚡️ 𝑨𝒍𝒍 𝒕𝒉𝒆 𝒓𝒆𝒔𝒖𝒍𝒕𝒔 𝒂𝒃𝒐𝒗𝒆 𝒄𝒐𝒎𝒆 𝒇𝒓𝒐𝒎 𝒘𝒉𝒂𝒕 𝒖𝒔𝒆𝒓𝒔 𝒉𝒂𝒗𝒆 𝒔𝒆𝒂𝒓𝒄𝒉𝒆𝒅 𝒇𝒐𝒓. "
-        "𝑻𝒉𝒆𝒚'𝒓𝒆 𝒔𝒉𝒐𝒘𝒏 𝒕𝒐 𝒚𝒐𝒖 𝒆𝒙𝒂𝒄𝒕𝒍𝒚 𝒂𝒔 𝒕𝒉𝒆𝒚 𝒘𝒆𝒓𝒆 𝒔𝒆𝒂𝒓𝒄𝒉𝒆𝒅, "
-        "𝒘𝒊𝒕𝒉𝒐𝒖𝒕 𝒂𝒏𝒚 𝒄𝒉𝒂𝒏𝒈𝒆𝒔 𝒃𝒚 𝒕𝒉𝒆 𝒐𝒘𝒏𝒆𝒓."
-    )
-    formatted_list += f"\n\n{additional_message}"
-    reply_text = f"<b>Top {len(truncated_messages)} Tʀᴀɴᴅɪɴɢ ᴏғ ᴛʜᴇ ᴅᴀʏ 👇:</b>\n\n{formatted_list}"
-    await message.reply_text(reply_text)
-
-@Client.on_message(filters.private & filters.command("pm_search") & filters.user(ADMINS))
-async def set_pm_search(client, message):
-    bot_id = client.me.id
-    try:
-        option = message.text.split(" ", 1)[1].strip().lower()
-        enable_status = option in ['on', 'true']
-    except (IndexError, ValueError):
-        await message.reply_text("<b>💔 Invalid option. Please send 'on' or 'off' after the command..</b>")
-        return
-    try:
-        await db.update_pm_search_status(bot_id, enable_status)
-        response_text = (
-            "<b> ᴘᴍ ꜱᴇᴀʀᴄʜ ᴇɴᴀʙʟᴇᴅ ✅</b>" if enable_status 
-            else "<b> ᴘᴍ ꜱᴇᴀʀᴄʜ ᴅɪꜱᴀʙʟᴇᴅ ❌</b>"
-        )
-        await message.reply_text(response_text)
-    except Exception as e:
-        logger.error(f"Error in set_pm_search: {e}")
-        await message.reply_text(f"<b>❗ An error occurred: {e}</b>")
-
-@Client.on_message(filters.private & filters.command("movie_update") & filters.user(ADMINS))
-async def set_movie_update_notification(client, message):
-    bot_id = client.me.id
-    try:
-        option = message.text.split(" ", 1)[1].strip().lower()
-        enable_status = option in ['on', 'true']
-    except (IndexError, ValueError):
-        await message.reply_text("<b>💔 Invalid option. Please send 'on' or 'off' after the command.</b>")
-        return
-    try:
-        await db.update_movie_update_status(bot_id, enable_status)
-        response_text = (
-            "<b>ᴍᴏᴠɪᴇ ᴜᴘᴅᴀᴛᴇ ɴᴏᴛɪꜰɪᴄᴀᴛɪᴏɴ ᴇɴᴀʙʟᴇᴅ ✅</b>" if enable_status 
-            else "<b>ᴍᴏᴠɪᴇ ᴜᴘᴅᴀᴛᴇ ɴᴏᴛɪꜰɪᴄᴀᴛɪᴏɴ ᴅɪꜱᴀʙʟᴇᴅ ❌</b>"
-        )
-        await message.reply_text(response_text)
-    except Exception as e:
-        logger.error(f"Error in set_movie_update_notification: {e}")
-        await message.reply_text(f"<b>❗ An error occurred: {e}</b>")
-
-@Client.on_message(filters.command("restart") & filters.user(ADMINS))
-async def stop_button(bot, message):
-    msg = await bot.send_message(text="<b><i>ʙᴏᴛ ɪꜱ ʀᴇꜱᴛᴀʀᴛɪɴɢ</i></b>", chat_id=message.chat.id)       
-    await asyncio.sleep(3)
-    await msg.edit("<b><i><u>ʙᴏᴛ ɪꜱ ʀᴇꜱᴛᴀʀᴛᴇᴅ</u> ✅</i></b>")
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-@Client.on_message(filters.command("del_msg") & filters.user(ADMINS))
-async def del_msg(client, message):
     confirm_markup = InlineKeyboardMarkup([[
         InlineKeyboardButton("Yes", callback_data="confirm_del_yes"),
         InlineKeyboardButton("No", callback_data="confirm_del_no")
@@ -1058,7 +1044,7 @@ async def set_tutorial(client, message: Message):
         tutorial_link = message.text.split(" ", 1)[1]
     except IndexError:
         return await message.reply_text(
-            f"<b>ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ !!\n\nᴜꜱᴇ ʟɪᴋᴇ ᴛʜɪꜱ -</b>\n\n"
+            f"<b>ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ !!\n\nᴜsᴇ ʟɪᴋᴇ ᴛʜɪs -</b>\n\n"
             f"<code>/{message.command[0]} https://t.me/dreamxbotz</code>"
         )
     if message.command[0] == "set_tutorial":
@@ -1117,28 +1103,17 @@ async def handle_shortner_command(c, m, shortner_key, api_key, log_prefix, fallb
         await save_group_settings(grp_id, api_key, fallback_api)
         await m.reply_text(
             f"<b><u>💢 ᴇʀʀᴏʀ ᴏᴄᴄᴜʀᴇᴅ!</u>\n\n"
-            f"ᴅᴇꜰᴀᴜʟᴛ ꜱʜᴏʀᴛɴᴇʀ ᴀᴘᴘʟɪᴇᴅ\n"
-            f"ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴄʜᴀɴɢᴇ ᴛʀʏ ᴀ ᴠᴀʟɪᴅ ꜱɪᴛᴇ ᴀɴᴅ ᴀᴘɪ ᴋᴇʏ.\n\n"
+            f"ᴅᴇꜰᴀʊʟᴛ ꜱʜᴏʀᴛɴᴇʀ ᴀᴘᴘʟɪᴇᴅ\n"
+            f"ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴄʜᴀɴɢᴇ ᴀ ᴠᴀʟɪᴅ ꜱɪᴛᴇ ᴀɴᴅ ᴀᴘɪ ᴋᴇʏ.\n\n"
             f"ʟɪᴋᴇ:\n\n`/{m.command[0]} mdiskshortner.link your_api_key_here`\n\n"
             f"💔 ᴇʀʀᴏʀ - <code>{e}</code></b>"
         )
-
-@Client.on_message(filters.command('set_shortner'))
-async def set_shortner(c, m):
-    await handle_shortner_command(c, m, 'shortner', 'api', 'New_Shortner_Set_For_1st_Verify', SHORTENER_WEBSITE, SHORTENER_API)
-
-@Client.on_message(filters.command('set_shortner_2'))
-async def set_shortner_2(c, m):
-    await handle_shortner_command(c, m, 'shortner_two', 'api_two', 'New_Shortner_Set_For_2nd_Verify', SHORTENER_WEBSITE2, SHORTENER_API2)
-
-@Client.on_message(filters.command('set_shortner_3'))
-async def set_shortner_3(c, m):
-    await handle_shortner_command(c, m, 'shortner_three', 'api_three', 'New_Shortner_Set_For_3rd_Verify', SHORTENER_WEBSITE3, SHORTENER_API3)
 
 @Client.on_message(filters.command('set_log_channel'))
 async def set_log(client, message):
     grp_id = message.chat.id
     title = message.chat.title
+    invite_link = await client.export_chat_invite_link(grp_id)
     if not await is_check_admin(client, grp_id, message.from_user.id):
         return await message.reply_text(script.NT_ADMIN_ALRT_TXT)
     if len(message.text.split()) == 1:
@@ -1153,9 +1128,9 @@ async def set_log(client, message):
     try:
         log = int(message.text.split(" ", 1)[1])
     except IndexError:
-        return await message.reply_text("<b><u>ɪɴᴠᴀɪʟᴅ ꜰᴏʀᴍᴀᴛ!!</u>\n\nᴜsᴇ ʟɪᴋᴇ ᴛʜɪs - `/set_log_channel -100xxxxxxxx`</b>")
+        return await message.reply_text("<b><u>ɪɴᴠᴀʟɪᴅ ꜰᴏʀᴍᴀᴛ!!</u>\n\nᴜsᴇ ʟɪᴋᴇ ᴛʜɪs - `/set_log_channel -100xxxxxxxx`</b>")
     except ValueError:
-        return await message.reply_text('<b>ᴍᴀᴋᴇ sᴜʀᴇ ɪᴅ ɪs ɪɴᴛᴇɢᴇʀ...</b>')
+        return await message.reply_text('<b>ᴍᴀᴋᴇ sᴜʀᴇ ɪᴅ ɪs ɪɴᴛᴇɡᴇʀ...</b>')
     try:
         t = await client.send_message(chat_id=log, text="<b>ʜᴇʏ ᴡʜᴀᴛ's ᴜᴘ!!</b>")
         await asyncio.sleep(3)
@@ -1163,12 +1138,12 @@ async def set_log(client, message):
     except Exception as e:
         return await message.reply_text(f'<b><u>😐 ᴍᴀᴋᴇ sᴜʀᴇ ᴛʜɪs ʙᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ...</u>\n\n💔 ᴇʀʀᴏʀ - <code>{e}</code></b>')
     await save_group_settings(grp_id, 'log', log)
-    await message.reply_text(f"<b>✅ sᴜᴄᴄᴇssꜰᴜʟʟʏ sᴇᴛ ʏᴏᴜʀ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}\n\nɪᴅ - `{log}`</b>", disable_web_page_preview=True)
+    await message.reply_text(f"<b>✅ sᴜᴄᴄᴇssꜰᴜʟʟʏ sᴇᴛ ʏᴏᴜʀ ʟᴏɡ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}\n\nɪᴅ - `{log}`</b>", disable_web_page_preview=True)
     user_id = message.from_user.id
     user_info = f"@{message.from_user.username}" if message.from_user.username else f"{message.from_user.mention}"
     link = (await client.get_chat(message.chat.id)).invite_link
     grp_link = f"[{message.chat.title}]({link})"
-    log_message = f"#New_Log_Channel_Set\n\nɴᴀᴍᴇ - {user_info}\n\nɪᴅ - `{user_id}`\n\nʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ - `{log}`\nɢʀᴏᴜᴘ ʟɪɴᴋ - `{grp_link}`\n\nɢʀᴏᴜᴘ ɪᴅ : `{grp_id}`"
+    log_message = f"#New_Log_Channel_Set\n\nɴᴀᴍᴇ - {user_info}\n\nɪᴅ - `{user_id}`\n\nʟᴏɡ ᴄʜᴀɴɴᴇʟ ɪᴅ - `{log}`\nɢʀᴏᴜᴘ ʟɪɴᴋ - `{grp_link}`\n\nɢʀᴏᴜᴘ ɪᴅ : `{grp_id}`"
     await client.send_message(LOG_API_CHANNEL, log_message, disable_web_page_preview=True) 
 
 
@@ -1313,7 +1288,7 @@ async def set_fsub(client, message):
         try:
             fsub_ids = [int(x) for x in option.split()]
         except ValueError:
-            return await message.reply_text('ᴍᴀᴋᴇ sᴜʀᴇ ᴀʟʟ ɪᴅs ᴀʀᴇ ɪɴᴛᴇɢᴇʀs.')
+            return await message.reply_text('ᴍᴀᴋᴇ sᴜʀᴇ ᴀʟʟ ɪᴅs ᴀʀᴇ ɪɴᴛᴇɡᴇʀs.')
         if len(fsub_ids) > 5:
             return await message.reply_text("ᴍᴀxɪᴍᴜᴍ 5 ᴄʜᴀɴɴᴇʟs ᴀʟʟᴏᴡᴇᴅ.")
         channels = "ᴄʜᴀɴɴᴇʟs:\n"
@@ -1330,7 +1305,7 @@ async def set_fsub(client, message):
             channel_titles.append(f"{chat.title} (`{id}`)")
             channels += f'{chat.title}\n'
         await save_group_settings(grp_id, 'fsub', fsub_ids)
-        await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
+        await message.reply_text(f"sᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ sᴇᴛ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
         mention = message.from_user.mention if message.from_user else "Unknown"
         await client.send_message(
             LOG_API_CHANNEL,
@@ -1352,7 +1327,7 @@ async def reset_all_settings(client, message):
             quote=True
         )
     except Exception as e:
-        print(f"[ERROR] reset_all_settings: {e}")
+        print(f"Error: {e}")
         await message.reply_text(
             "<b>🚫 An error occurred while resetting group settings.\nPlease try again later.</b>",
             quote=True

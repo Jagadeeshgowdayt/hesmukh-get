@@ -1,3 +1,36 @@
+# Function to format movie as HTML hyperlink
+def format_explore_movie(movies):
+    # Apply hyperlink logic to every single line
+    lines = []
+    for movie in movies:
+        print(f"Formatting movie: {movie['title']} ({movie['year']})")  # Debug print
+        lines.append(f'<a href="{movie["url"]}">{movie["title"]} ({movie["year"]})</a>')
+    return '\n'.join(lines)
+POPULAR_MOVIES = [
+    {"title": "The Shawshank Redemption", "year": "1994", "url": "https://www.imdb.com/title/tt0111161/"},
+    {"title": "The Godfather", "year": "1972", "url": "https://www.imdb.com/title/tt0068646/"},
+    {"title": "The Dark Knight", "year": "2008", "url": "https://www.imdb.com/title/tt0468569/"},
+    {"title": "Pulp Fiction", "year": "1994", "url": "https://www.imdb.com/title/tt0110912/"},
+    {"title": "Forrest Gump", "year": "1994", "url": "https://www.imdb.com/title/tt0109830/"},
+    {"title": "Inception", "year": "2010", "url": "https://www.imdb.com/title/tt1375666/"},
+    {"title": "Fight Club", "year": "1999", "url": "https://www.imdb.com/title/tt0137523/"},
+    {"title": "The Matrix", "year": "1999", "url": "https://www.imdb.com/title/tt0133093/"},
+    {"title": "Goodfellas", "year": "1990", "url": "https://www.imdb.com/title/tt0099685/"},
+    {"title": "The Lord of the Rings: The Return of the King", "year": "2003", "url": "https://www.imdb.com/title/tt0167260/"},
+    {"title": "Interstellar", "year": "2014", "url": "https://www.imdb.com/title/tt0816692/"},
+    {"title": "Parasite", "year": "2019", "url": "https://www.imdb.com/title/tt6751668/"},
+    {"title": "Joker", "year": "2019", "url": "https://www.imdb.com/title/tt7286456/"},
+    {"title": "Avengers: Endgame", "year": "2019", "url": "https://www.imdb.com/title/tt4154796/"},
+    {"title": "Gladiator", "year": "2000", "url": "https://www.imdb.com/title/tt0172495/"},
+    {"title": "Titanic", "year": "1997", "url": "https://www.imdb.com/title/tt0120338/"},
+    {"title": "The Lion King", "year": "1994", "url": "https://www.imdb.com/title/tt0110357/"},
+    {"title": "Schindler's List", "year": "1993", "url": "https://www.imdb.com/title/tt0108052/"},
+    {"title": "The Silence of the Lambs", "year": "1991", "url": "https://www.imdb.com/title/tt0102926/"},
+    {"title": "Saving Private Ryan", "year": "1998", "url": "https://www.imdb.com/title/tt0120815/"}
+]
+
+# Template for explore movie message
+EXPLORE_MOVIE_MSG = '<a href="{url}">{title} ({year})</a>'
 class script(object):
     START_TXT = """<b><u>🚩 ᴊᴀɪ ꜱʜʀɪ ʀᴀᴍ 🚩</u></b>
 
