@@ -3,6 +3,7 @@
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import asyncio
+from plugins.bot_filters import bot1_filter, bot2_filter
 
 @Client.on_message(filters.command("hyperlinkdemo") & filters.private)
 async def hyperlink_demo(client, message):
@@ -281,7 +282,7 @@ logger = logging.getLogger(__name__)
 TIMEZONE = "Asia/Kolkata"
 BATCH_FILES = {}
 
-@Client.on_message(filters.command("start") & filters.incoming)
+@Client.on_message(filters.command("start") & filters.incoming & bot1_filter & bot2_filter)
 async def start(client, message):
     if EMOJI_MODE:
         try:
@@ -727,7 +728,7 @@ async def save_template(client, message):
 
 
 # Clean implementation of request forwarding (support group only)
-@Client.on_message((filters.command(["request", "Request"]) | filters.regex("(?i)#request")) & filters.group)
+@Client.on_message((filters.command(["request", "Request"]) | filters.regex("(?i)#request")) & filters.group & bot1_filter)
 async def requests(client, message):
     if REQST_CHANNEL is None or SUPPORT_CHAT_ID is None:
         return

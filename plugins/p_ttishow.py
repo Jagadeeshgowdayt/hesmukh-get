@@ -8,6 +8,7 @@ from utils import get_size, temp, get_settings, get_readable_time
 from Script import script
 from pyrogram.errors import ChatAdminRequired
 import asyncio
+from plugins.bot_filters import bot1_filter
 import psutil
 import logging
 from time import time
@@ -15,7 +16,7 @@ from bot import botStartTime
 
 """-----------------------------------------https://t.me/dreamxbotz--------------------------------------"""
 
-@Client.on_message(filters.new_chat_members & filters.group)
+@Client.on_message(filters.new_chat_members & filters.group & bot1_filter)
 async def save_group(bot, message):
     dreamx_check = [u.id for u in message.new_chat_members]
     if temp.ME in dreamx_check:

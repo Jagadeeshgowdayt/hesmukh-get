@@ -3,12 +3,19 @@ import logging
 from info import *
 from pyrogram import Client
 from dreamxbotz.util.config_parser import TokenParser
-from . import multi_clients, work_loads, dreamxbotz
+from . import multi_clients, work_loads, dreamxbotz, dreamxbotz2
 
 
 async def initialize_clients():
     multi_clients[0] = dreamxbotz
     work_loads[0] = 0
+    
+    # Add second bot to multi_clients if dual bot mode is enabled
+    if DUAL_BOT_MODE and dreamxbotz2:
+        multi_clients[1] = dreamxbotz2
+        work_loads[1] = 0
+        print("Dual bot mode enabled - Added second bot to multi_clients")
+    
     all_tokens = TokenParser().parse_from_env()
     if not all_tokens:
         print("No additional clients found, using default client")

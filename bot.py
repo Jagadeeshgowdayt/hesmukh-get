@@ -16,7 +16,7 @@ from info import *
 from utils import temp
 from Script import script
 from plugins import web_server, check_expired_premium, keep_alive
-from dreamxbotz.Bot import dreamxbotz
+from dreamxbotz.Bot import dreamxbotz, dreamxbotz2
 from dreamxbotz.util.keepalive import ping_server
 from dreamxbotz.Bot.clients import initialize_clients
 from PIL import Image
@@ -42,6 +42,15 @@ async def dreamxbotz_start():
     await dreamxbotz.start()
     bot_info = await dreamxbotz.get_me()
     dreamxbotz.username = bot_info.username
+    
+    # Start second bot if dual bot mode is enabled
+    if DUAL_BOT_MODE and dreamxbotz2:
+        print('Initializing Second DreamxBotz')
+        await dreamxbotz2.start()
+        bot_info2 = await dreamxbotz2.get_me()
+        dreamxbotz2.username = bot_info2.username
+        print(f'Second Bot Started: {bot_info2.username}')
+    
     await initialize_clients()
     for name in files:
         with open(name) as a:
@@ -72,7 +81,21 @@ async def dreamxbotz_start():
     temp.B_LINK = me.mention
     dreamxbotz.username = '@' + me.username
     dreamxbotz.loop.create_task(check_expired_premium(dreamxbotz))
+    
+    # Setup second bot if enabled
+    if DUAL_BOT_MODE and dreamxbotz2:
+        me2 = await dreamxbotz2.get_me()
+        temp.ME2 = me2.id
+        temp.U_NAME2 = me2.username
+        temp.B_NAME2 = me2.first_name
+        temp.B_LINK2 = me2.mention
+        dreamxbotz2.username = '@' + me2.username
+        dreamxbotz2.loop.create_task(check_expired_premium(dreamxbotz2))
+        logging.info(f"Second bot started: {me2.username}")
+    
     logging.info(f"{me.first_name} with Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
+    if DUAL_BOT_MODE and dreamxbotz2:
+        logging.info(f"Dual Bot Mode: Second bot {me2.first_name} also started.")
     logging.info(LOG_STR)
     logging.info(script.LOGO)
     tz = pytz.timezone('Asia/Kolkata')
@@ -80,6 +103,12 @@ async def dreamxbotz_start():
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
     await dreamxbotz.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(temp.B_LINK, today, time))
+    
+    # Send startup notification for second bot if enabled
+    if DUAL_BOT_MODE and dreamxbotz2:
+        me2 = await dreamxbotz2.get_me()
+        await dreamxbotz2.send_message(chat_id=LOG_CHANNEL, text=f"🔄 **Second Bot Restarted!**\n\n📅 **Date:** `{today}`\n⏰ **Time:** `{time}`\n🤖 **Bot:** {me2.mention}")
+    
     app = web.AppRunner(await web_server())
     await app.setup()
     bind_address = "0.0.0.0"

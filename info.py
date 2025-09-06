@@ -22,6 +22,11 @@ API_ID = int(environ.get('API_ID', '16564172')) # API ID from my.telegram.org
 API_HASH = environ.get('API_HASH', 'f0184f4c1bad2efdc2f59b8591c7a839')  # API Hash from my.telegram.org
 BOT_TOKEN = environ.get('BOT_TOKEN', "8251332933:AAHgs4HjXc8tsx1jsiWsgW_ZGdydkIE_PUc")    # Bot token from @BotFather
 
+# Second Bot Configuration
+SESSION2 = environ.get('SESSION2', 'X_ploreFlix_1080_search_2')   # Session name for the second bot
+BOT_TOKEN2 = environ.get('BOT_TOKEN2', "8320033577:AAEOoi78A-InD8IZ6O6Xwrrds-qQU2jdjl8")    # Second bot token from @BotFather
+DUAL_BOT_MODE = is_enabled(environ.get('DUAL_BOT_MODE', "True"), True)  # Enable dual bot mode
+
 # ============================
 # Bot Settings Configuration
 # ============================

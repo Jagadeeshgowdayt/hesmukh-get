@@ -38,7 +38,9 @@ BUTTONS2 = {}
 SPELL_CHECK = {}
 
 
-@Client.on_message(filters.group & filters.text & filters.incoming)
+from plugins.bot_filters import bot1_filter, bot2_filter
+
+@Client.on_message(filters.group & filters.text & filters.incoming & bot1_filter)
 async def give_filter(client, message):
     if EMOJI_MODE:
         try:
@@ -74,7 +76,7 @@ async def give_filter(client, message):
         )
 
 
-@Client.on_message(filters.private & filters.text & filters.incoming & ~filters.regex(r"^/"))
+@Client.on_message(filters.private & filters.text & filters.incoming & ~filters.regex(r"^/") & bot2_filter)
 async def pm_text(bot, message):
     bot_id = bot.me.id
     content = message.text

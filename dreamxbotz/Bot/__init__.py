@@ -25,12 +25,12 @@ from info import *
 
 class dreamcinezoneXBot(Client):
 
-    def __init__(self):
+    def __init__(self, session_name=SESSION, bot_token=BOT_TOKEN):
         super().__init__(
-            name=SESSION,
+            name=session_name,
             api_id=API_ID,
             api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
+            bot_token=bot_token,
             workers=60,
             plugins={"root": "plugins"},
             sleep_threshold=5,
@@ -75,6 +75,9 @@ class dreamcinezoneXBot(Client):
                 current += 1
       
 dreamxbotz = dreamcinezoneXBot()
+
+# Second bot instance for dual bot mode
+dreamxbotz2 = dreamcinezoneXBot(session_name=SESSION2, bot_token=BOT_TOKEN2) if DUAL_BOT_MODE else None
 
 multi_clients = {}
 work_loads = {}

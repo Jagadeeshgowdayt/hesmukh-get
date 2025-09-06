@@ -7,6 +7,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 import logging
 from database.ia_filterdb import dreamxbotz_get_movies, dreamxbotz_get_series
 from pyrogram.enums import ParseMode
+from plugins.bot_filters import bot2_filter
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -186,7 +187,7 @@ async def imdb_callback(bot: Client, quer_y: CallbackQuery):
         await quer_y.message.edit(caption, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=False)
     await quer_y.answer()
         
-@Client.on_message(filters.private & filters.command("movies"))
+@Client.on_message(filters.private & filters.command("movies") & bot2_filter)
 async def dreamxbotz_list_movies(client, message):
     try:
         movies = await dreamxbotz_get_movies()
@@ -200,7 +201,7 @@ async def dreamxbotz_list_movies(client, message):
         logger.error(f"Error in dreamxbotz_list_movies: {e}")
         await message.reply("An Error Occurred ☹️", parse_mode=ParseMode.HTML)
 
-@Client.on_message(filters.private & filters.command("series"))
+@Client.on_message(filters.private & filters.command("series") & bot2_filter)
 async def dreamxbotz_list_series(client, message):
     try:
         series_data = await dreamxbotz_get_series()
