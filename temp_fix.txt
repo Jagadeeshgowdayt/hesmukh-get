@@ -1,0 +1,4 @@
+                text = (
+                    f"<b>Title: {movie_title}</b>\n"
+                    f'<a href="{deep_link}">👉👉 Download now 👈👈</a>'
+                )

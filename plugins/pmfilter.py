@@ -846,6 +846,27 @@ async def cb_handler(client: Client, query: CallbackQuery):
         clicked = query.from_user.id
         ident, key = query.data.split("#")
         settings = await get_settings(query.message.chat.id)
+        
+        # Check force subscription before allowing "Send All" download
+        if not await db.has_premium_access(query.from_user.id):
+            btn = []
+            fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
+            btn += await is_subscribed(client, query.from_user.id, fsub_channels)
+            btn += await is_req_subscribed(client, query.from_user.id, AUTH_REQ_CHANNELS)
+            if btn:
+                btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksendall#{key}")])
+                try:
+                    await query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup(btn))
+                except MessageNotModified:
+                    pass
+                await query.answer(
+                    f"👋 Hello {query.from_user.first_name},\n\n"
+                    "🛑 Yᴏᴜ ᴍᴜsᴛ ᴊᴏɪɴ ᴀʟʟ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴀʟʟ ғɪʟᴇs.\n"
+                    "👉 Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴇᴀᴄʜ ᴏɴᴇ ᴀɴᴅ ᴄʟɪᴄᴋ ᴛʀʏ ᴀɢᴀɪɴ.\n",
+                    show_alert=True
+                )
+                return
+        
         try:
             await query.answer(url=f"https://telegram.me/{temp.U_NAME}?start=allfiles_{query.message.chat.id}_{key}")
             return
@@ -914,6 +935,32 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await log_error(client, f"❌ Error in checksub callback:\n\n{repr(e)}")
             logger.error(f"❌ Error in checksub callback:\n\n{repr(e)}")
 
+    elif query.data.startswith("checksendall"):
+        try:
+            ident, key = query.data.split("#")
+            btn = []
+            settings = await get_settings(query.message.chat.id)
+            fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
+            btn += await is_subscribed(client, query.from_user.id, fsub_channels)
+            btn += await is_req_subscribed(client, query.from_user.id, AUTH_REQ_CHANNELS)
+            if btn:
+                btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksendall#{key}")])
+                try:
+                    await query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup(btn))
+                except MessageNotModified:
+                    pass
+                await query.answer(
+                    f"👋 Hello {query.from_user.first_name},\n\n"
+                    "🛑 Yᴏᴜ sᴛɪʟʟ ʜᴀᴠᴇɴ'ᴛ ᴊᴏɪɴᴇᴅ ᴀʟʟ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs.\n"
+                    "👉 Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴇᴀᴄʜ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴄʟɪᴄᴋ ᴛʀʏ ᴀɢᴀɪɴ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴀʟʟ ғɪʟᴇs.\n",
+                    show_alert=True
+                )
+                return
+            await query.answer(url=f"https://telegram.me/{temp.U_NAME}?start=allfiles_{query.message.chat.id}_{key}")
+            await query.message.delete()
+        except Exception as e:
+            await log_error(client, f"❌ Error in checksendall callback:\n\n{repr(e)}")
+            logger.error(f"❌ Error in checksendall callback:\n\n{repr(e)}")
 
     elif query.data.startswith("killfilesdq"):
         ident, keyword = query.data.split("#")
@@ -1641,7 +1688,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
     elif query.data == "source":
         buttons = [[
-            InlineKeyboardButton('ᴅʀᴇᴀᴍxʙᴏᴛᴢ 📜', url='https://github.com/DreamXBotz/Auto_Filter_Bot.git'),
             InlineKeyboardButton('⇋ ʙᴀᴄᴋ ⇋', callback_data='about')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -1869,6 +1915,31 @@ async def auto_filter(client, msg, spoll=False):
         if len(message.text) < 100:
             search = message.text
             search = search.lower()
+            
+            # Check force subscription before proceeding with search
+            settings = await get_settings(message.chat.id)
+            if not await db.has_premium_access(message.from_user.id):
+                btn = []
+                fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
+                if fsub_channels:
+                    btn += await is_subscribed(client, message.from_user.id, fsub_channels)
+                if AUTH_REQ_CHANNELS:
+                    btn += await is_req_subscribed(client, message.from_user.id, AUTH_REQ_CHANNELS)
+                if btn:
+                    photo = random.choice(FSUB_PICS) if FSUB_PICS else "https://graph.org/file/7478ff3eac37f4329c3d8.jpg"
+                    caption = (
+                        f"👋 ʜᴇʟʟᴏ {message.from_user.mention}\n\n"
+                        "🛑 ʏᴏᴜ ᴍᴜsᴛ ᴊᴏɪɴ ᴛʜᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴛᴏ sᴇᴀʀᴄʜ ᴍᴏᴠɪᴇs.\n"
+                        "👉 ᴊᴏɪɴ ᴀʟʟ ᴛʜᴇ ʙᴇʟᴏᴡ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʀʏ ᴀɡᴀɪɴ."
+                    )
+                    await message.reply_photo(
+                        photo=photo,
+                        caption=caption,
+                        reply_markup=InlineKeyboardMarkup(btn),
+                        parse_mode=enums.ParseMode.HTML
+                    )
+                    return
+            
             m = await message.reply_text(f'**🔎 sᴇᴀʀᴄʜɪɴɢ** `{search}`', reply_to_message_id=message.id)
             find = search.split(" ")
             search = ""
@@ -1899,6 +1970,33 @@ async def auto_filter(client, msg, spoll=False):
                 else:
                     await m.delete()
                     return await advantage_spell_chok(client, message)
+            else:
+                # Provide a deep-link "Download now" instead of auto-sending files
+                key = f"{message.chat.id}-{message.id}"
+                temp.GETALL[key] = files  # ensure stored for later retrieval
+                deep_link = f"https://t.me/{temp.U_NAME}?start=allfiles_{message.chat.id}_{key}"
+                
+                # Get the first file to extract title information
+                first_file = files[0] if files else None
+                movie_title = search  # Default to search term
+                if first_file:
+                    try:
+                        # Try to get a cleaner title from the file name
+                        file_name = first_file.file_name
+                        if file_name:
+                            # Extract title from filename (remove quality tags, etc.)
+                            clean_title = file_name.replace('.mkv', '').replace('.mp4', '').replace('.avi', '')
+                            # Take the search term as title for consistency
+                            movie_title = search
+                    except:
+                        movie_title = search
+                
+                text = (
+                    f"<b>Title: {movie_title}</b>\n"
+                    f"<a href=\"{deep_link}\">👉👉 Download now ��</a>"
+                )
+                await m.edit(text, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+                return
         else:
             return
     else:
@@ -2094,6 +2192,75 @@ async def auto_filter(client, msg, spoll=False):
             await message.delete()
 
 
+async def send_all_files_to_user(client, message, files, search):
+    """Send all files directly to user grouped by movie"""
+    try:
+        settings = await get_settings(message.chat.id)
+        
+        # Group files by movie title
+        movie_groups = {}
+        for file in files:
+            title = clean_filename(file.file_name)
+            # Extract movie name (remove year, quality, language info)
+            movie_name = re.sub(r'\b(19|20)\d{2}\b', '', title)  # Remove year
+            movie_name = re.sub(r'\b(720p|1080p|480p|360p|2160p|4K|HD|CAM|HDTS|DVDRIP|WEBRIP|BLURAY)\b', '', movie_name, flags=re.IGNORECASE)  # Remove quality
+            movie_name = re.sub(r'\b(HINDI|ENGLISH|TAMIL|TELUGU|MALAYALAM|KANNADA|PUNJABI|BENGALI|MARATHI|GUJARATI)\b', '', movie_name, flags=re.IGNORECASE)  # Remove language
+            movie_name = re.sub(r'[.\-_]+', ' ', movie_name).strip()  # Clean separators
+            movie_name = ' '.join(movie_name.split()[:3])  # Take first 3 words as movie name
+            
+            if movie_name not in movie_groups:
+                movie_groups[movie_name] = []
+            movie_groups[movie_name].append(file)
+        
+        # Send response with grouped movies
+        response = f"<b>🎬 Search Results for: {search}</b>\n\n"
+        
+        for idx, (movie_name, movie_files) in enumerate(movie_groups.items(), start=1):
+            # Create a unique key for this movie group
+            key = f"{message.chat.id}-{message.id}-{idx}"
+            temp.GETALL[key] = movie_files
+            
+            # Count qualities and languages
+            qualities = set()
+            languages = set()
+            total_size = 0
+            
+            for file in movie_files:
+                title = clean_filename(file.file_name)
+                # Extract quality
+                quality_match = re.search(r'\b(720p|1080p|480p|360p|2160p|4K|HD|CAM|HDTS|DVDRIP|WEBRIP|BLURAY)\b', title, re.IGNORECASE)
+                if quality_match:
+                    qualities.add(quality_match.group().upper())
+                
+                # Extract language
+                lang_match = re.search(r'\b(HINDI|ENGLISH|TAMIL|TELUGU|MALAYALAM|KANNADA|PUNJABI|BENGALI|MARATHI|GUJARATI)\b', title, re.IGNORECASE)
+                if lang_match:
+                    languages.add(lang_match.group().title())
+                
+                total_size += file.file_size
+            
+            # Format qualities and languages
+            quality_text = ', '.join(sorted(qualities)) if qualities else 'Various'
+            language_text = ', '.join(sorted(languages)) if languages else 'Various'
+            size_text = get_size(total_size)
+            
+            # Create send all link
+            send_all_link = f"https://telegram.me/{temp.U_NAME}?start=allfiles_{message.chat.id}_{key}"
+            
+            response += f"<b>{idx}. Title: {movie_name}</b>\n"
+            response += f"👉 <a href='{send_all_link}'>Download All</a> 👈👈\n\n"
+        
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text=response,
+            parse_mode=enums.ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+        
+    except Exception as e:
+        logger.exception(e)
+
+
 async def ai_spell_check(chat_id, wrong_name):
     async def search_movie(wrong_name):
         search_results = imdb.search_movie(wrong_name)
@@ -2145,16 +2312,32 @@ async def advantage_spell_chok(client, message):
         except:
             pass
         return
-    user = message.from_user.id if message.from_user else 0
-    buttons = [
-        [InlineKeyboardButton(text=movie.get('title'), callback_data=f"spol#{movie.movieID}#{user}")
-         ] for movie in movies]
-
-    buttons.append([InlineKeyboardButton(
-        text="🚫 ᴄʟᴏsᴇ 🚫", callback_data='close_data')])
-    d = await message.reply_text(text=script.CUDNT_FND.format(message.from_user.mention), reply_markup=InlineKeyboardMarkup(buttons), reply_to_message_id=message.id)
-    await asyncio.sleep(60)
-    await d.delete()
+    # Send all matching movies in requested format with Send All button
+    response = ""
+    for movie in movies:
+        title = movie.get('title')
+        year = movie.get('year', '')
+        # Search for files of this movie to get file details
+        search_term = f"{title} {year}".strip()
+        files, offset, total_results = await get_search_results(message.chat.id, search_term, offset=0, filter=True)
+        
+        if files:
+            # Generate a key for Send All functionality
+            key = f"{message.chat.id}-{message.id}-{movie.movieID}"
+            temp.GETALL[key] = files
+            
+            # Format each movie with Send All link
+            response += f"<b>Title: {title} ({year})</b>\n"
+            response += f"👉👉 <a href='https://telegram.me/{temp.U_NAME}?start=allfiles_{message.chat.id}_{key}'>Download now</a> 👈👈\n\n"
+        else:
+            # If no files found, show movie with search callback
+            response += f"<b>Title: {title} ({year})</b>\n"
+            response += f"👉👉 <a href='https://telegram.me/{temp.U_NAME}?start=spol_{movie.movieID}'>Download now</a> 👈👈\n\n"
+    
+    if not response:
+        response = "No matching movies found."
+    
+    await message.reply_text(response, parse_mode=enums.ParseMode.HTML)
     try:
         await message.delete()
     except:

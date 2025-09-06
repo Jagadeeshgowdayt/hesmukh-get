@@ -16,6 +16,100 @@ logger.setLevel(logging.INFO)
 
 lock = asyncio.Lock()
 
+@Client.on_message(filters.command('index') & filters.user(ADMINS))
+async def index_command(bot, message):
+    """Handle /index command for admins"""
+    if len(message.command) < 2:
+        return await message.reply(
+            "**📁 Index Command Usage:**\n\n"
+            "**Format:** `/index <channel_id> [last_message_id]`\n\n"
+            "**Examples:**\n"
+            "• `/index -1001234567890` - Index from current skip point\n"
+            "• `/index -1001234567890 1000` - Index up to message 1000\n"
+            "• `/index @channelname` - Index using username\n"
+            "• `/index @channelname 500` - Index username up to message 500\n\n"
+            "**Alternative:** Forward a message from channel or send channel link\n"
+            "**Skip Setting:** Use `/setskip <number>` to set starting point"
+        )
+    
+    try:
+        # Parse command arguments
+        if len(message.command) == 2:
+            chat_id = message.command[1]
+            last_msg_id = None
+        else:
+            chat_id = message.command[1]
+            last_msg_id = int(message.command[2])
+        
+        # Handle username format
+        if chat_id.startswith('@'):
+            chat_username = chat_id[1:]  # Remove @
+            try:
+                chat_info = await bot.get_chat(chat_username)
+                chat_id = chat_info.id
+            except Exception as e:
+                return await message.reply(f"❌ Error getting chat info: {e}")
+        else:
+            chat_id = int(chat_id)
+        
+        # Get chat info and last message if not provided
+        try:
+            chat_info = await bot.get_chat(chat_id)
+            if not last_msg_id:
+                # Get the latest message ID
+                async for msg in bot.get_chat_history(chat_id, limit=1):
+                    last_msg_id = msg.id
+                    break
+                if not last_msg_id:
+                    return await message.reply("❌ Could not get latest message ID from channel")
+        except Exception as e:
+            return await message.reply(f"❌ Error accessing channel: {e}\n\nMake sure bot is admin in the channel!")
+        
+        # Create confirmation message
+        buttons = [
+            [InlineKeyboardButton('✅ Start Indexing', callback_data=f'index#accept#{chat_id}#{last_msg_id}#{message.from_user.id}')],
+            [InlineKeyboardButton('❌ Cancel', callback_data='close_data')]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        
+        chat_title = chat_info.title or chat_info.first_name or "Unknown"
+        current_skip = getattr(temp, 'CURRENT', 2)
+        total_to_index = max(0, last_msg_id - current_skip)
+        
+        await message.reply(
+            f"**📁 Index Confirmation**\n\n"
+            f"**Channel:** `{chat_title}`\n"
+            f"**Chat ID:** `{chat_id}`\n"
+            f"**Last Message ID:** `{last_msg_id}`\n"
+            f"**Current Skip:** `{current_skip}`\n"
+            f"**Messages to Index:** `{total_to_index}`\n\n"
+            f"**Note:** Use `/setskip <number>` to change starting point\n\n"
+            f"**⚠️ Make sure bot is admin in the channel!**",
+            reply_markup=reply_markup
+        )
+        
+    except ValueError:
+        await message.reply("❌ Invalid format! Use: `/index <channel_id> [last_message_id]`")
+    except Exception as e:
+        await message.reply(f"❌ Error: {e}")
+
+@Client.on_message(filters.command('index') & ~filters.user(ADMINS))
+async def index_command_non_admin(bot, message):
+    """Handle /index command for non-admins"""
+    await message.reply(
+        "**📁 How to Request Indexing**\n\n"
+        "**Method 1 - Forward Message:**\n"
+        "• Forward any message from the channel to this bot\n"
+        "• Bot will send indexing request to moderators\n\n"
+        "**Method 2 - Send Channel Link:**\n"
+        "• Send a channel message link like:\n"
+        "• `https://t.me/channelname/123`\n"
+        "• `https://t.me/c/1234567890/123`\n\n"
+        "**Note:** You need to be a member of the channel\n"
+        "**Wait:** Moderators will review and approve your request\n\n"
+        "**Current Skip Point:** Use with admin approval only"
+    )
+
 @Client.on_callback_query(filters.regex(r'^index'))
 async def index_files(bot, query):
     if query.data.startswith('index_cancel'):
